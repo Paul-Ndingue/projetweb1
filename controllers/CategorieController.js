@@ -30,7 +30,7 @@ exports.getUtilisateurById = async (req, res) => {
   } catch (error) {
     res.status(500).send(error);
   }
-};/// eeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+};
 
 // Mettre à jour un utilisateur
 exports.updateUtilisateur = async (req, res) => {
