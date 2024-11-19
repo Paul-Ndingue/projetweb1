@@ -1,55 +1,58 @@
-const Utilisateur = require('../models/utilisateur');
+//const { Methode_Payement } = require('..');
 
-// Créer un nouvel utilisateur
-exports.creerUtilisateur = async (req, res) => {
-  try {
-    const utilisateur = new Utilisateur(req.body);
-    await utilisateur.save();
-    res.status(201).send(utilisateur);
-  } catch (error) {
-    res.status(400).send(error);
-  }
-};
+import {Methode_Payement} from '../models/Relation.js';
 
-// Récupérer tous les utilisateurs
-exports.getUtilisateurs = async (req, res) => {
-  try {
-    const utilisateurs = await Utilisateur.find();
-    res.send(utilisateurs);
-  } catch (error) {
-    res.status(500).send(error);
-  }
-};
+  // Créer une nouvelle méthode de paiement
+  export const createMethodePayement = async (req, res) => {
+    try {
+      const methodePayement = await Methode_Payement.create(req.body);
+      res.status(201).json(methodePayement); // Retourne la méthode de paiement créée
+    } catch (error) {
+      res.status(400).json({ error: 'Erreur lors de la création de la méthode de paiement.' });
+    }
+  };
 
-// Récupérer un utilisateur par ID
-exports.getUtilisateurById = async (req, res) => {
-  try {
-    const utilisateur = await Utilisateur.findById(req.params.id);
-    if (!utilisateur) return res.status(404).send();
-    res.send(utilisateur);
-  } catch (error) {
-    res.status(500).send(error);
+  // Obtenir toutes les méthodes de paiement
+  export const getMethodesPayement = async (req, res) => {
+    try {
+      const methodesPayement = await Methode_Payement.findAll();
+      res.status(200).json(methodesPayement); // Retourne toutes les méthodes de paiement
+    } catch (error) {
+      res.status(400).json({ error: 'Erreur lors de la récupération des méthodes de paiement.' });
+    }
   }
-};
 
-// Mettre à jour un utilisateur
-exports.updateUtilisateur = async (req, res) => {
-  try {
-    const utilisateur = await Utilisateur.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
-    if (!utilisateur) return res.status(404).send();
-    res.send(utilisateur);
-  } catch (error) {
-    res.status(400).send(error);
-  }
-};
+  // Obtenir une méthode de paiement par ID
+  export const getMethodePayementById = async (req, res) => {
+    try {
+      const methodePayement = await Methode_Payement.findByPk(req.params.id);
+      if (!methodePayement) return res.status(404).json({ error: 'Méthode de paiement non trouvée.' });
+      res.status(200).json(methodePayement);
+    } catch (error) {
+      res.status(400).json({ error: 'Erreur lors de la récupération de la méthode de paiement.' });
+    }
+  };
 
-// Supprimer un utilisateur
-exports.deleteUtilisateur = async (req, res) => {
-  try {
-    const utilisateur = await Utilisateur.findByIdAndDelete(req.params.id);
-    if (!utilisateur) return res.status(404).send();
-    res.send(utilisateur);
-  } catch (error) {
-    res.status(500).send(error);
-  }
-};
+  // Mettre à jour une méthode de paiement
+  export const updateMethodePayement = async (req, res)  => {
+    try {
+      const methodePayement = await Methode_Payement.findByPk(req.params.id);
+      if (!methodePayement) return res.status(404).json({ error: 'Méthode de paiement non trouvée.' });
+      await methodePayement.update(req.body);
+      res.status(200).json(methodePayement);
+    } catch (error) {
+      res.status(400).json({ error: 'Erreur lors de la mise à jour de la méthode de paiement.' });
+    }
+  };
+
+  // Supprimer une méthode de paiement
+  export const deleteMethodePayement = async (req, res) => {
+    try {
+      const methodePayement = await Methode_Payement.findByPk(req.params.id);
+      if (!methodePayement) return res.status(404).json({ error: 'Méthode de paiement non trouvée.' });
+      await methodePayement.destroy();
+      res.status(204).json();
+    } catch (error) {
+      res.status(400).json({ error: 'Erreur lors de la suppression de la méthode de paiement.' });
+    }
+  };

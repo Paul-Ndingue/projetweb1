@@ -1,55 +1,60 @@
-const Utilisateur = require('../models/utilisateur');
+import {Produit} from "../models/Relation.js";
 
-// Créer un nouvel utilisateur
-exports.creerUtilisateur = async (req, res) => {
-  try {
-    const utilisateur = new Utilisateur(req.body);
-    await utilisateur.save();
-    res.status(201).send(utilisateur);
-  } catch (error) {
-    res.status(400).send(error);
-  }
-};
+// module.exports = {
+  // Créer un nouveau produit
+   export const createProduit = async(req, res) => {
+    try {
+      const produit = await Produit.create(req.body);
+      res.status(201).json(produit);
+    } catch (error) {
+      res.status(400).json({ error: 'Erreur lors de la création du produit.' });
+    }
+  };
 
-// Récupérer tous les utilisateurs
-exports.getUtilisateurs = async (req, res) => {
-  try {
-    const utilisateurs = await Utilisateur.find();
-    res.send(utilisateurs);
-  } catch (error) {
-    res.status(500).send(error);
-  }
-};
+  // Obtenir tous les produits
+  export const getProduits = async(req, res) => {
+    try {
+      // const produits = await Produit.findAll({ include: [Categorie, Stock] });
+      const produits = await Produit.findAll();
+      res.status(200).json(produits); // Inclut les catégories et le stock
+    } catch (error) {
+      res.status(400).json({ error: 'Erreur lors de la récupération des produits.' });
+    }
+  };
 
-// Récupérer un utilisateur par ID
-exports.getUtilisateurById = async (req, res) => {
-  try {
-    const utilisateur = await Utilisateur.findById(req.params.id);
-    if (!utilisateur) return res.status(404).send();
-    res.send(utilisateur);
-  } catch (error) {
-    res.status(500).send(error);
-  }
-};
+  // Obtenir un produit par ID
+  export const getProduitById = async (req, res) => {
+    try {
+      //const produit = await Produit.findByPk(req.params.id, { include: [Categorie, Stock] });
+      const produit = await Produit.findByPk(req.params.id);
+      if (!produit) return res.status(404).json({ error: 'Produit non trouvé.' });
+      res.status(200).json(produit);
+    } catch (error) {
+      res.status(400).json({ error: 'Erreur lors de la récupération du produit.' });
+    }
+  };
 
-// Mettre à jour un utilisateur
-exports.updateUtilisateur = async (req, res) => {
-  try {
-    const utilisateur = await Utilisateur.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
-    if (!utilisateur) return res.status(404).send();
-    res.send(utilisateur);
-  } catch (error) {
-    res.status(400).send(error);
-  }
-};
+  // Mettre à jour un produit
+  export const updateProduit = async (req, res) => {
+    try {
+      const produit = await Produit.findByPk(req.params.id);
+      if (!produit) return res.status(404).json({ error: 'Produit non trouvé.' });
+      await produit.update(req.body);
+      res.status(200).json(produit);
+    } catch (error) {
+      res.status(400).json({ error: 'Erreur lors de la mise à jour du produit.' });
+    }
+  };
 
-// Supprimer un utilisateur
-exports.deleteUtilisateur = async (req, res) => {
-  try {
-    const utilisateur = await Utilisateur.findByIdAndDelete(req.params.id);
-    if (!utilisateur) return res.status(404).send();
-    res.send(utilisateur);
-  } catch (error) {
-    res.status(500).send(error);
-  }
-};
+  // Supprimer un produit
+  export const deleteProduit = async (req, res) => {
+    try {
+      const produit = await Produit.findByPk(req.params.id);
+      if (!produit) return res.status(404).json({ error: 'Produit non trouvé.' });
+      await produit.destroy();
+      res.status(204).json();
+    } catch (error) {
+      res.status(400).json({ error: 'Erreur lors de la suppression du produit.' });
+    }
+  };
+// };

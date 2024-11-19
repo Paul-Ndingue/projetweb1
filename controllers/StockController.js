@@ -1,55 +1,57 @@
-const Utilisateur = require('../models/utilisateur');
+//const { Stock, Produit } = require('..');
 
-// Créer un nouvel utilisateur
-exports.creerUtilisateur = async (req, res) => {
-  try {
-    const utilisateur = new Utilisateur(req.body);
-    await utilisateur.save();
-    res.status(201).send(utilisateur);
-  } catch (error) {
-    res.status(400).send(error);
-  }
-};
+import {Stock} from "../models/Relation.js";  // Créer un nouvel enregistrement de stock
 
-// Récupérer tous les utilisateurs
-exports.getUtilisateurs = async (req, res) => {
-  try {
-    const utilisateurs = await Utilisateur.find();
-    res.send(utilisateurs);
-  } catch (error) {
-    res.status(500).send(error);
-  }
-};
+export const createStock = async (req, res) => {
+    try {
+      const stock = await Stock.create(req.body);
+      res.status(201).json(stock);
+    } catch (error) {
+      res.status(400).json({ error: 'Erreur lors de la création du stock.' });
+    }
+  };
 
-// Récupérer un utilisateur par ID
-exports.getUtilisateurById = async (req, res) => {
-  try {
-    const utilisateur = await Utilisateur.findById(req.params.id);
-    if (!utilisateur) return res.status(404).send();
-    res.send(utilisateur);
-  } catch (error) {
-    res.status(500).send(error);
-  }
-};
+  // Obtenir toutes les entrées de stock
+  export const getStocks = async (req, res) => {
+    try {
+      const stocks = await Stock.findAll({ include: [Produit] });
+      res.status(200).json(stocks);
+    } catch (error) {
+      res.status(400).json({ error: 'Erreur lors de la récupération des stocks.' });
+    }
+  };
 
-// Mettre à jour un utilisateur
-exports.updateUtilisateur = async (req, res) => {
-  try {
-    const utilisateur = await Utilisateur.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
-    if (!utilisateur) return res.status(404).send();
-    res.send(utilisateur);
-  } catch (error) {
-    res.status(400).send(error);
-  }
-};
+  // Obtenir un stock par ID
+  export const getStockById = async (req, res) => {
+    try {
+      const stock = await Stock.findByPk(req.params.id, { include: [Produit] });
+      if (!stock) return res.status(404).json({ error: 'Stock non trouvé.' });
+      res.status(200).json(stock);
+    } catch (error) {
+      res.status(400).json({ error: 'Erreur lors de la récupération du stock.' });
+    }
+  };
 
-// Supprimer un utilisateur
-exports.deleteUtilisateur = async (req, res) => {
-  try {
-    const utilisateur = await Utilisateur.findByIdAndDelete(req.params.id);
-    if (!utilisateur) return res.status(404).send();
-    res.send(utilisateur);
-  } catch (error) {
-    res.status(500).send(error);
-  }
-};
+  // Mettre à jour une entrée de stock
+  export const updateStock = async (req, res) => {
+    try {
+      const stock = await Stock.findByPk(req.params.id);
+      if (!stock) return res.status(404).json({ error: 'Stock non trouvé.' });
+      await stock.update(req.body);
+      res.status(200).json(stock);
+    } catch (error) {
+      res.status(400).json({ error: 'Erreur lors de la mise à jour du stock.' });
+    }
+  };
+
+  // Supprimer une entrée de stock
+  export const deleteStock = async (req, res) => {
+    try {
+      const stock = await Stock.findByPk(req.params.id);
+      if (!stock) return res.status(404).json({ error: 'Stock non trouvé.' });
+      await stock.destroy();
+      res.status(204).json();
+    } catch (error) {
+      res.status(400).json({ error: 'Erreur lors de la suppression du stock.' });
+    }
+  };

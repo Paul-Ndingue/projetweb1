@@ -1,55 +1,68 @@
-const Utilisateur = require('../models/utilisateur');
+// const Categorie = require('../models').Categorie; // Assure-toi que le modèle est bien importé
+import {Categorie} from "../models/Relation.js";
 
-// Créer un nouvel utilisateur
-exports.creerUtilisateur = async (req, res) => {
-  try {
-    const utilisateur = new Utilisateur(req.body);
-    await utilisateur.save();
-    res.status(201).send(utilisateur);
-  } catch (error) {
-    res.status(400).send(error);
-  }
-};
+// const CategorieController = {
+  // Créer une catégorie
+ export const createCategorie = async (req, res) => {
+    try {
+      const { Nom, Description } = req.body;
+      const categorie = await Categorie.create({ Nom, Description });
+      res.status(201).json({data: categorie});
+    } catch (error) {
+      res.status(500).json({ error: 'Erreur lors de la création de la catégorie.' });
+    }
+  };
 
-// Récupérer tous les utilisateurs
-exports.getUtilisateurs = async (req, res) => {
-  try {
-    const utilisateurs = await Utilisateur.find();
-    res.send(utilisateurs);
-  } catch (error) {
-    res.status(500).send(error);
-  }
-};
+  // Récupérer toutes les catégories
+  export const getCategories = async (req, res) => {
+    try {
+      const categories = await Categorie.findAll();
+      res.status(200).json(categories);
+    } catch (error) {
+      res.status(500).json({ error: 'Erreur lors de la récupération des catégories.' });
+    }
+  };
 
-// Récupérer un utilisateur par ID
-exports.getUtilisateurById = async (req, res) => {
-  try {
-    const utilisateur = await Utilisateur.findById(req.params.id);
-    if (!utilisateur) return res.status(404).send();
-    res.send(utilisateur);
-  } catch (error) {
-    res.status(500).send(error);
-  }
-};
+  // Récupérer une catégorie par ID
+  export const getCategorieById = async (req, res) => {
+    try {
+      const categorie = await Categorie.findByPk(req.params.id);
+      if (!categorie) {
+        return res.status(404).json({ error: 'Catégorie non trouvée.' });
+      }
+      res.status(200).json(categorie);
+    } catch (error) {
+      res.status(500).json({ error: 'Erreur lors de la récupération de la catégorie.' });
+    }
+  };
 
-// Mettre à jour un utilisateur
-exports.updateUtilisateur = async (req, res) => {
-  try {
-    const utilisateur = await Utilisateur.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
-    if (!utilisateur) return res.status(404).send();
-    res.send(utilisateur);
-  } catch (error) {
-    res.status(400).send(error);
-  }
-};
+  // Mettre à jour une catégorie
+ export const updateCategorie =  async (req, res) => {
+    try {
+      const { Nom, Description } = req.body;
+      const categorie = await Categorie.findByPk(req.params.id);
+      if (!categorie) {
+        return res.status(404).json({ error: 'Catégorie non trouvée.' });
+      }
+      categorie.Nom = Nom;
+      categorie.Description = Description;
+      await categorie.save();
+      res.status(200).json(categorie);
+    } catch (error) {
+      res.status(500).json({ error: 'Erreur lors de la mise à jour de la catégorie.' });
+    }
+  };
 
-// Supprimer un utilisateur
-exports.deleteUtilisateur = async (req, res) => {
-  try {
-    const utilisateur = await Utilisateur.findByIdAndDelete(req.params.id);
-    if (!utilisateur) return res.status(404).send();
-    res.send(utilisateur);
-  } catch (error) {
-    res.status(500).send(error);
-  }
-};
+  // Supprimer une catégorie
+ export const deleteCategorie = async (req, res) => {
+    try {
+      const categorie = await Categorie.findByPk(req.params.id);
+      if (!categorie) {
+        return res.status(404).json({ error: 'Catégorie non trouvée.' });
+      }
+      await categorie.destroy();
+      res.status(200).json({ message: 'Catégorie supprimée avec succès.' });
+    } catch (error) {
+      res.status(500).json({ error: 'Erreur lors de la suppression de la catégorie.' });
+    }
+  };

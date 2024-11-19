@@ -1,55 +1,58 @@
-const Utilisateur = require('../models/utilisateur');
+//const { Commande, Produit, Produit_Commande } = require('../models');
 
-// Créer un nouvel utilisateur
-exports.creerUtilisateur = async (req, res) => {
-  try {
-    const utilisateur = new Utilisateur(req.body);
-    await utilisateur.save();
-    res.status(201).send(utilisateur);
-  } catch (error) {
-    res.status(400).send(error);
-  }
-};
+import {Commande} from "../models/Relation.js";  // Créer une nouvelle commande
 
-// Récupérer tous les utilisateurs
-exports.getUtilisateurs = async (req, res) => {
-  try {
-    const utilisateurs = await Utilisateur.find();
-    res.send(utilisateurs);
-  } catch (error) {
-    res.status(500).send(error);
-  }
-};
+  export const createCommande = async (req, res) => {
+    try {
+      const commande = await Commande.create(req.body);
+      res.status(201).json(commande);
+    } catch (error) {
+      res.status(400).json({ error: 'Erreur lors de la création de la commande.' });
+    }
+  };
 
-// Récupérer un utilisateur par ID
-exports.getUtilisateurById = async (req, res) => {
-  try {
-    const utilisateur = await Utilisateur.findById(req.params.id);
-    if (!utilisateur) return res.status(404).send();
-    res.send(utilisateur);
-  } catch (error) {
-    res.status(500).send(error);
-  }
-};
+  // Obtenir toutes les commandes
+  export const getCommandes = async (req, res) => {
+    try {
+      //const commandes = await Commande.findAll({ include: [Produit] });
+      const commandes = await Commande.findAll();
+      res.status(200).json(commandes); // Inclut les produits dans la réponse
+    } catch (error) {
+      res.status(400).json({ error: 'Erreur lors de la récupération des commandes.' });
+    }
+  };
 
-// Mettre à jour un utilisateur
-exports.updateUtilisateur = async (req, res) => {
-  try {
-    const utilisateur = await Utilisateur.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
-    if (!utilisateur) return res.status(404).send();
-    res.send(utilisateur);
-  } catch (error) {
-    res.status(400).send(error);
-  }
-};
+  // Obtenir une commande par ID
+  export const getCommandeById = async (req, res) => {
+    try {
+      //const commande = await Commande.findByPk(req.params.id, { include: [Produit] });
+      const commande = await Commande.findByPk(req.params.id);
+      if (!commande) return res.status(404).json({ error: 'Commande non trouvée.' });
+      res.status(200).json(commande);
+    } catch (error) {
+      res.status(400).json({ error: 'Erreur lors de la récupération de la commande.' });
+    }
+  };
 
-// Supprimer un utilisateur
-exports.deleteUtilisateur = async (req, res) => {
-  try {
-    const utilisateur = await Utilisateur.findByIdAndDelete(req.params.id);
-    if (!utilisateur) return res.status(404).send();
-    res.send(utilisateur);
-  } catch (error) {
-    res.status(500).send(error);
-  }
-};
+  // Mettre à jour une commande
+  export const updateCommande = async (req, res) => {
+    try {
+      const commande = await Commande.findByPk(req.params.id);
+      if (!commande) return res.status(404).json({ error: 'Commande non trouvée.' });
+      await commande.update(req.body);
+      res.status(200).json(commande);
+    } catch (error) {
+      res.status(400).json({ error: 'Erreur lors de la mise à jour de la commande.' });
+    }
+  };
+
+  // Supprimer une commande
+  export const deleteCommande = async (req, res) => {
+    try {
+      const commande = await Commande.findByPk(req.params.id);
+      if (!commande) return res.status(404).json({ error: 'Commande non trouvée.' });
+      await commande.destroy();
+      res.status(204).json();
+    } catch (error) {
+      res.status(400).json({ error: 'Erreur lors de la suppression de la commande.' });
+    }};
