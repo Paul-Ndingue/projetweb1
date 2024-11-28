@@ -18,6 +18,7 @@ import { DataTypes } from "sequelize";
   //     foreignKey: 'ID_Categorie',
   //   });
   // };
+  //admettons que c'est une essai
 
   export default Categorie;
 // };
