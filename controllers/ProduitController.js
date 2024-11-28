@@ -1,4 +1,4 @@
-import {Produit} from "../models/Relation.js";
+import {Categorie, Produit} from "../models/Relation.js";
 
 // module.exports = {
   // Créer un nouveau produit
@@ -26,7 +26,8 @@ import {Produit} from "../models/Relation.js";
   export const getProduitById = async (req, res) => {
     try {
       //const produit = await Produit.findByPk(req.params.id, { include: [Categorie, Stock] });
-      const produit = await Produit.findByPk(req.params.id);
+      const produit = await Produit.findByPk(req.params.id, {include: Categorie});
+      // const produit = await Produit.findByPk(req.params.id, {include: Categorie});
       if (!produit) return res.status(404).json({ error: 'Produit non trouvé.' });
       res.status(200).json(produit);
     } catch (error) {
@@ -57,4 +58,21 @@ import {Produit} from "../models/Relation.js";
       res.status(400).json({ error: 'Erreur lors de la suppression du produit.' });
     }
   };
+
+  export const addCagorieToProduit = async (req, res) => {
+      // const {id: idProduit} = req.params;
+      const idProduit = req.params.id;
+      const {id: idCategorie } = req.body;
+
+      try {
+        const produit = await Produit.findByPk(idProduit);
+        const categorie = await Categorie.findByPk(idCategorie);
+        await produit.setCategorie(categorie);
+        // produit.setCategorie(categorie);
+        // Produit.setCategorie(categorie, {where: id});
+        res.status(200).json({data: produit});
+      } catch (error) {
+        res.status(400).json({message: error.message});
+      }
+  }
 // };

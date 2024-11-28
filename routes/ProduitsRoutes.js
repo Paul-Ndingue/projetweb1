@@ -2,7 +2,7 @@
 // const router = express.Router();
 // const ProduitController = require('../controllers/ProduitController');
 import { Router } from "express";
-import { createProduit, deleteProduit, getProduitById, getProduits, updateProduit } from "../controllers/ProduitController.js";
+import { addCagorieToProduit, createProduit, deleteProduit, getProduitById, getProduits, updateProduit } from "../controllers/ProduitController.js";
 
 const produitRouter = Router();
 
@@ -13,6 +13,6 @@ produitRouter
 .get('/:id', getProduitById)
 .put('/:id', updateProduit)
 .delete('/:id', deleteProduit)
-;
+.put('/set/:id', addCagorieToProduit);
 
 export default produitRouter;
